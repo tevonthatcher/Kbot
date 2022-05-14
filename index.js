@@ -9,7 +9,7 @@ client.on('message', msg => {
   msg.reply('pong');
 });
 
-client.login('OTc1MDA4Nzc2MDEwNzI3NDQ2.GAOJmn.8uUmii1C2i1ecyKtxSJKODFiYtjc9ybrqt4nyM');
+client.login(process.env.DISCORD_TOKEN);
 
 const prefix = `!`;
 client.on("message", function (message) {
