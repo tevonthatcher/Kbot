@@ -18,9 +18,7 @@ const soundboardSchema = new mongoose.Schema({
 const Soundlist = mongoose.model('Soundlist', soundboardSchema);
 
 const connectDB = async () => {
-    console.log(process)
-    console.log(process.env)
-    mongoose.connect(process.env.dbURI, {
+    mongoose.connect(process.env.DATABASE_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     });
