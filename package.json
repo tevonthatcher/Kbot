@@ -19,6 +19,7 @@
     "discord.js": "^13.7.0",
     "ejs": "^3.1.5",
     "express": "^4.15.2",
+    "mongoose": "^6.3.4",
     "sequelize": "^6.19.0",
     "sqlite3": "^5.0.8",
     "yt-search": "^2.10.3",
