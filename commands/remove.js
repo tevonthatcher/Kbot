@@ -1,25 +1,6 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-    host: 'localhost',
-    dialect: 'sqlite',
-    logging: false,
-    // SQLite only
-    storage: 'database.sqlite',
-});
-
-const Tags = sequelize.define('tags', {
-    url: {
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    name: {
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    description: Sequelize.TEXT,
-});
+const { Soundlist, connectDB } = require('../Schema'); 
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -27,12 +8,12 @@ module.exports = {
         .setDescription('remove sounds from the soundboard')
         .addStringOption((option) => option.setName("name").setDescription("The name of the sound.").setRequired(true)),
     async execute(interaction) {
-        await Tags.sync().then(async () => {
+        await connectDB().then(async () => {
             let name = interaction.options.getString("name");
             
-            const rowCount = await Tags.destroy({ where: { name: name } });
+            const res = await Soundlist.deleteOne({ name: name });
 
-            if(!rowCount){
+            if(res.deletedCount === 0){
                 return interaction.reply(({ content: "Sound does not exist!", ephemeral: true }));
             }
 

@@ -1,26 +1,7 @@
+const mongoose = require('mongoose');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const Sequelize = require('sequelize');
 const { Player, QueryType } = require('discord-player');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-    host: 'localhost',
-    dialect: 'sqlite',
-    logging: false,
-    // SQLite only
-    storage: 'database.sqlite',
-});
-
-const Tags = sequelize.define('tags', {
-    url: {
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    name: {
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    description: Sequelize.TEXT,
-});
+const { Soundlist, connectDB } = require('../Schema'); 
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -42,17 +23,20 @@ module.exports = {
             try {
                 if (!queue.connection) await queue.connect(interaction.member.voice.channel);
             } catch {
+                queue.clear();
                 queue.destroy();
                 return await interaction.reply({ content: "Could not join your voice channel!", ephemeral: true });
             }
 
             let soundName = interaction.options.getString("sound");
 
-            const tag = await Tags.findOne({ where: { name: soundName } });
+            const sound = await connectDB().then(async () => {
+                return await Soundlist.findOne({ name: soundName });
+            }).catch(console.error); 
 
-            if(tag){
+            if(sound){
                 await interaction.deferReply();
-                const track = await player.search(tag.url, {
+                const track = await player.search(sound.url, {
                         requestedBy: interaction.user,
                         searchEngine: QueryType.YOUTUBE_VIDEO
                     }).then(tracks => tracks.tracks[0])
